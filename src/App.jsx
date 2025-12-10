@@ -1,0 +1,597 @@
+import { useRef, useState, useEffect } from 'react'
+import './App.css'
+
+const FORM_ACTION =
+  'https://docs.google.com/forms/d/e/1FAIpQLSftMCHrr_ouZu8nQ_eL0Oe1OpJ8so4iBgN0Xf4Xfsrb7tU-jQ/formResponse'
+
+const hearOptions = [
+  'Family, Friend or Colleague',
+  'WhatsApp Status, Group, Message, Share',
+  'Social Media (Facebook, Instagram, LinkedIn, X, etc)',
+  'Google Search',
+  'CDS Visit / NYSC Program',
+  'Flyer / Banner / Billboard',
+  'Event / Program / Workshop, etc',
+  'Other',
+]
+
+const learnOptions = ['Yes', 'No']
+
+const countries = [
+  'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Antigua and Barbuda', 'Argentina', 'Armenia', 'Australia', 'Austria',
+  'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bhutan',
+  'Bolivia', 'Bosnia and Herzegovina', 'Botswana', 'Brazil', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cabo Verde', 'Cambodia',
+  'Cameroon', 'Canada', 'Central African Republic', 'Chad', 'Chile', 'China', 'Colombia', 'Comoros', 'Congo', 'Costa Rica',
+  'Croatia', 'Cuba', 'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Egypt',
+  'El Salvador', 'Equatorial Guinea', 'Eritrea', 'Estonia', 'Eswatini', 'Ethiopia', 'Fiji', 'Finland', 'France', 'Gabon',
+  'Gambia', 'Georgia', 'Germany', 'Ghana', 'Greece', 'Grenada', 'Guatemala', 'Guinea', 'Guinea-Bissau', 'Guyana',
+  'Haiti', 'Honduras', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Israel',
+  'Italy', 'Jamaica', 'Japan', 'Jordan', 'Kazakhstan', 'Kenya', 'Kiribati', 'Kuwait', 'Kyrgyzstan', 'Laos',
+  'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Madagascar', 'Malawi',
+  'Malaysia', 'Maldives', 'Mali', 'Malta', 'Marshall Islands', 'Mauritania', 'Mauritius', 'Mexico', 'Micronesia', 'Moldova',
+  'Monaco', 'Mongolia', 'Montenegro', 'Morocco', 'Mozambique', 'Myanmar', 'Namibia', 'Nauru', 'Nepal', 'Netherlands',
+  'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'North Korea', 'North Macedonia', 'Norway', 'Oman', 'Pakistan', 'Palau',
+  'Palestine', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Qatar', 'Romania',
+  'Russia', 'Rwanda', 'Saint Kitts and Nevis', 'Saint Lucia', 'Saint Vincent and the Grenadines', 'Samoa', 'San Marino', 'Sao Tome and Principe', 'Saudi Arabia', 'Senegal',
+  'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia', 'Solomon Islands', 'Somalia', 'South Africa', 'South Korea',
+  'South Sudan', 'Spain', 'Sri Lanka', 'Sudan', 'Suriname', 'Sweden', 'Switzerland', 'Syria', 'Taiwan', 'Tajikistan',
+  'Tanzania', 'Thailand', 'Timor-Leste', 'Togo', 'Tonga', 'Trinidad and Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Tuvalu',
+  'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Vatican City', 'Venezuela',
+  'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe'
+]
+
+const nigerianStates = [
+  'Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue', 'Borno', 'Cross River', 'Delta',
+  'Ebonyi', 'Edo', 'Ekiti', 'Enugu', 'FCT Abuja', 'Gombe', 'Imo', 'Jigawa', 'Kaduna', 'Kano',
+  'Katsina', 'Kebbi', 'Kogi', 'Kwara', 'Lagos', 'Nasarawa', 'Niger', 'Ogun', 'Ondo', 'Osun',
+  'Oyo', 'Plateau', 'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara'
+]
+
+const citiesByState = {
+  'Abia': ['Aba', 'Ohafia', 'Arochukwu', 'Isuikwuato', 'Umunneochi', 'Other'],
+  'Adamawa': ['Yola', 'Mubi', 'Girei', 'Ganye', 'Karim Lamido', 'Other'],
+  'Akwa Ibom': ['Uyo', 'Ikot Ekpene', 'Oron', 'Etim Ekpo', 'Ibeno', 'Other'],
+  'Anambra': ['Awka', 'Onitsha', 'Nnewi', 'Ekwulobia', 'Agulu', 'Other'],
+  'Bauchi': ['Bauchi', 'Zaria', 'Misau', 'Dass', 'Lere', 'Other'],
+  'Bayelsa': ['Yenagoa', 'Brass', 'Sangana', 'Ekeremor', 'Nembe', 'Other'],
+  'Benue': ['Makurdi', 'Gboko', 'Otukpo', 'Enugu', 'Katsina-Ala', 'Other'],
+  'Borno': ['Maiduguri', 'Biu', 'Damaturu', 'Monguno', 'Gwoza', 'Other'],
+  'Cross River': ['Calabar', 'Ogoja', 'Ikom', 'Akamkpa', 'Buea', 'Other'],
+  'Delta': ['Asaba', 'Warri', 'Sapele', 'Ughelli', 'Burutu', 'Other'],
+  'Ebonyi': ['Abakaliki', 'Afikpo', 'Onueke', 'Ezza', 'Uburu', 'Other'],
+  'Edo': ['Benin City', 'Auchi', 'Uromi', 'Irrua', 'Ekpoma', 'Other'],
+  'Ekiti': ['Ado-Ekiti', 'Ikere-Ekiti', 'Ijero-Ekiti', 'Akure', 'Moba', 'Other'],
+  'Enugu': ['Enugu', 'Nsukka', 'Agbani', 'Coal Camp', 'Udi', 'Other'],
+  'FCT Abuja': ['Abuja', 'Gwagwalada', 'Kuje', 'Bwari', 'Karshi', 'Other'],
+  'Gombe': ['Gombe', 'Bajoga', 'Deba', 'Potiskum', 'Nafada', 'Other'],
+  'Imo': ['Owerri', 'Aba', 'Ohafia', 'Mbaise', 'Okigwe', 'Other'],
+  'Jigawa': ['Dutse', 'Kazaure', 'Hadejia', 'Birnin Kudu', 'Jahun', 'Other'],
+  'Kaduna': ['Kaduna', 'Zaria', 'Kafanchan', 'Kudan', 'Kachia', 'Other'],
+  'Kano': ['Kano', 'Kumbotso', 'Bichi', 'Dawakin Kudu', 'Gwarzo', 'Other'],
+  'Katsina': ['Katsina', 'Kankia', 'Daura', 'Rimi', 'Matazun', 'Other'],
+  'Kebbi': ['Birnin Kebbi', 'Bunza', 'Argungu', 'Suru', 'Kamba', 'Other'],
+  'Kogi': ['Lokoja', 'Okene', 'Idah', 'Kabba', 'Ankpa', 'Other'],
+  'Kwara': ['Ilorin', 'Offa', 'Jebba', 'Omu-Aran', 'Lafiagi', 'Other'],
+  'Lagos': ['Lagos', 'Ikeja', 'Lekki', 'VI', 'Surulere', 'Yaba', 'Ikorodu', 'Badagry', 'Other'],
+  'Nasarawa': ['Lafia', 'Keffi', 'Akwanga', 'Obi', 'Nasarawa Eggon', 'Other'],
+  'Niger': ['Minna', 'Suleja', 'Bida', 'Zaria', 'Lapai', 'Other'],
+  'Ogun': ['Abeokuta', 'Ijebu-Ode', 'Sagamu', 'Ilaro', 'Ota', 'Other'],
+  'Ondo': ['Akure', 'Owo', 'Ikare', 'Ondo', 'Ore', 'Other'],
+  'Osun': ['Osogbo', 'Ilesha', 'Iwo', 'Ibadan', 'Ikire', 'Other'],
+  'Oyo': ['Ibadan', 'Oyo', 'Ogbomosho', 'Ijebu', 'Sepeteri', 'Other'],
+  'Plateau': ['Jos', 'Bukuru', 'Pankshin', 'Vom', 'Bokkos', 'Other'],
+  'Rivers': ['Port Harcourt', 'Obio-Akpor', 'Ikeja', 'Bonny', 'Opobo', 'Other'],
+  'Sokoto': ['Sokoto', 'Gusau', 'Wurno', 'Gwadabawa', 'Goronyo', 'Other'],
+  'Taraba': ['Jalingo', 'Wukari', 'Zing', 'Gembu', 'Sardauna', 'Other'],
+  'Yobe': ['Damaturu', 'Potiskum', 'Katagum', 'Gashua', 'Nguru', 'Other'],
+  'Zamfara': ['Gusau', 'Kaura Namoda', 'Talka', 'Maradun', 'Shinkafi', 'Other']
+}
+
+function App() {
+  const formRef = useRef(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showModal, setShowModal] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const [countrySearch, setCountrySearch] = useState('')
+  const [selectedCountry, setSelectedCountry] = useState('Nigeria')
+  const [showCountryDropdown, setShowCountryDropdown] = useState(false)
+
+  const [stateSearch, setStateSearch] = useState('')
+  const [selectedState, setSelectedState] = useState('Adamawa')
+  const [showStateDropdown, setShowStateDropdown] = useState(false)
+
+  const [citySearch, setCitySearch] = useState('')
+  const [selectedCity, setSelectedCity] = useState('Yola')
+  const [showCityDropdown, setShowCityDropdown] = useState(false)
+
+  const [hearSearch, setHearSearch] = useState('')
+  const [selectedHear, setSelectedHear] = useState('')
+  const [showHearDropdown, setShowHearDropdown] = useState(false)
+
+  const filteredCountries = countries.filter((country) =>
+    country.toLowerCase().includes(countrySearch.toLowerCase())
+  )
+
+  const filteredStates = nigerianStates.filter((state) =>
+    state.toLowerCase().includes(stateSearch.toLowerCase())
+  )
+
+  const availableCities = selectedState ? citiesByState[selectedState] || [] : []
+  const filteredCities = availableCities.filter((city) =>
+    city.toLowerCase().includes(citySearch.toLowerCase())
+  )
+
+  const filteredHearOptions = hearOptions.filter((option) =>
+    option.toLowerCase().includes(hearSearch.toLowerCase())
+  )
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.custom-select-wrapper')) {
+        setShowCountryDropdown(false)
+        setCountrySearch('')
+        setShowStateDropdown(false)
+        setStateSearch('')
+        setShowCityDropdown(false)
+        setCitySearch('')
+        setShowHearDropdown(false)
+        setHearSearch('')
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    if (!formRef.current) return
+
+    const formData = new FormData(formRef.current)
+    setIsSubmitting(true)
+    setSubmitError('')
+
+    try {
+      await fetch(FORM_ACTION, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: formData,
+      })
+      formRef.current.reset()
+      setShowModal(true)
+    } catch (error) {
+      setSubmitError('Something went wrong. Please try again in a moment.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <div className="page">
+      <div className="bg-aurora" aria-hidden="true" />
+
+      <div className="layout">
+        {/* Header with Logo */}
+        <header className="header-section">
+          <img src="/toko-logo.png" alt="Toko Academy" className="brand-logo" />
+        </header>
+
+        {/* Registration Form */}
+        <section className="card form-card">
+          <header className="card-header">
+            <div>
+              <p className="badge">Toko Academy Registration Form</p>
+              <h2>Join us today</h2>
+              <p className="lede">Quick, simple, and secure registration.</p>
+            </div>
+          </header>
+
+          <form
+            ref={formRef}
+            action={FORM_ACTION}
+            method="POST"
+            target="_self"
+            onSubmit={handleSubmit}
+          >
+            <input type="hidden" name="fvv" value="1" />
+            <input type="hidden" name="fbzx" value="-1271932783757056429" />
+            <input type="hidden" name="pageHistory" value="0,1,2" />
+
+            {/* All fields in one section */}
+            <div className="unified-section">
+              <div className="field-grid-two">
+                <label className="field">
+                  <span>First Name</span>
+                  <input
+                    id="938403932"
+                    name="entry.938403932"
+                    type="text"
+                    placeholder="First name"
+                    required
+                  />
+                </label>
+                <label className="field">
+                  <span>Middle Name</span>
+                  <input
+                    id="1886087831"
+                    name="entry.1886087831"
+                    type="text"
+                    placeholder="Middle name (optional)"
+                  />
+                </label>
+              </div>
+
+              <div className="field-grid-two">
+                <label className="field">
+                  <span>Last Name</span>
+                  <input
+                    id="1177775265"
+                    name="entry.1177775265"
+                    type="text"
+                    placeholder="Last name"
+                    required
+                  />
+                </label>
+                <label className="field">
+                  <span>Age Range</span>
+                  <select
+                    id="1239723871"
+                    name="entry.1239723871"
+                    className="select-field"
+                  >
+                    <option value="">Select age range</option>
+                    <option value="5 - 12">5 - 12</option>
+                    <option value="13 - 17">13 - 17</option>
+                    <option value="18 - 24">18 - 24</option>
+                    <option value="25 - 31">25 - 31</option>
+                    <option value="32 Above">32 Above</option>
+                  </select>
+                </label>
+              </div>
+
+              <div className="field">
+                <span className="label">Gender</span>
+                <div className="pill-group">
+                  {['Male', 'Female'].map((option) => (
+                    <label key={option} className="pill-option">
+                      <input
+                        type="radio"
+                        name="entry.937345206"
+                        value={option}
+                        required
+                      />
+                      <span>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="field">
+                <span className="label">Email</span>
+                <input
+                  id="1176471856"
+                  name="entry.1176471856"
+                  type="email"
+                  placeholder="you@email.com"
+                />
+              </div>
+
+              <div className="field-grid-two">
+                <label className="field">
+                  <span>Phone</span>
+                  <input
+                    id="1993772028"
+                    name="entry.1993772028"
+                    type="tel"
+                    placeholder="0800 000 0000"
+                  />
+                </label>
+                <div className="field">
+                  <span>Country</span>
+                  <div className="custom-select-wrapper">
+                    <input
+                      type="text"
+                      value={countrySearch || selectedCountry}
+                      onChange={(e) => {
+                        setCountrySearch(e.target.value)
+                        if (e.target.value && selectedCountry) {
+                          setSelectedCountry('')
+                        }
+                        setShowCountryDropdown(true)
+                      }}
+                      onFocus={() => {
+                        setCountrySearch('')
+                        setShowCountryDropdown(true)
+                      }}
+                      placeholder="Type to search countries... (e.g., Nigeria)"
+                      className="country-search-input"
+                    />
+                    <input
+                      type="hidden"
+                      id="1837299617"
+                      name="entry.1837299617"
+                      value={selectedCountry}
+                    />
+                    {showCountryDropdown && (
+                      <div className="country-dropdown">
+                        {filteredCountries.length > 0 ? (
+                          filteredCountries.map((country) => (
+                            <div
+                              key={country}
+                              className="country-option"
+                              onClick={() => {
+                                setSelectedCountry(country)
+                                setCountrySearch('')
+                                setShowCountryDropdown(false)
+                              }}
+                            >
+                              {country}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="country-option no-results">No countries found</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="field-row">
+                {selectedCountry === 'Nigeria' ? (
+                  <div className="field">
+                    <span>State</span>
+                    <div className="custom-select-wrapper">
+                      <input
+                        type="text"
+                        value={stateSearch || selectedState}
+                        onChange={(e) => {
+                          setStateSearch(e.target.value)
+                          setShowStateDropdown(true)
+                          if (e.target.value) {
+                            setSelectedState('')
+                          }
+                        }}
+                        onFocus={() => setShowStateDropdown(true)}
+                        className="country-search-input"
+                        placeholder="Type to search states... (e.g., Lagos)"
+                      />
+                      <input
+                        type="hidden"
+                        id="1870628818"
+                        name="entry.1870628818"
+                        value={selectedState}
+                      />
+                      {showStateDropdown && (
+                        <div className="country-dropdown">
+                          {filteredStates.length > 0 ? (
+                            filteredStates.map((state) => (
+                              <div
+                                key={state}
+                                className="country-option"
+                                onClick={() => {
+                                  setSelectedState(state)
+                                  setStateSearch('')
+                                  setShowStateDropdown(false)
+                                }}
+                              >
+                                {state}
+                              </div>
+                            ))
+                          ) : (
+                            <div className="country-option no-results">No states found</div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <label className="field">
+                    <span>State</span>
+                    <input
+                      id="1870628818"
+                      name="entry.1870628818"
+                      type="text"
+                      placeholder="State"
+                    />
+                  </label>
+                )}
+                {selectedCountry === 'Nigeria' && selectedState ? (
+                  <div className="field">
+                    <span>City</span>
+                    <div className="custom-select-wrapper">
+                      <input
+                        type="text"
+                        value={citySearch || selectedCity}
+                        onChange={(e) => {
+                          setCitySearch(e.target.value)
+                          setShowCityDropdown(true)
+                          if (e.target.value) {
+                            setSelectedCity('')
+                          }
+                        }}
+                        onFocus={() => setShowCityDropdown(true)}
+                        className="country-search-input"
+                        placeholder="Type to search cities..."
+                      />
+                      <input
+                        type="hidden"
+                        id="1603432109"
+                        name="entry.1603432109"
+                        value={selectedCity}
+                      />
+                      {showCityDropdown && (
+                        <div className="country-dropdown">
+                          {filteredCities.length > 0 ? (
+                            filteredCities.map((city) => (
+                              <div
+                                key={city}
+                                className="country-option"
+                                onClick={() => {
+                                  setSelectedCity(city)
+                                  setCitySearch('')
+                                  setShowCityDropdown(false)
+                                }}
+                              >
+                                {city}
+                              </div>
+                            ))
+                          ) : (
+                            <div className="country-option no-results">No cities found</div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <label className="field">
+                    <span>City</span>
+                    <input id="1603432109" name="entry.1603432109" type="text" placeholder="Lagos" />
+                  </label>
+                )}
+              </div>
+
+              <label className="field">
+                <span>Referral Code (optional)</span>
+                <input
+                  id="1455106736"
+                  name="entry.1455106736"
+                  type="text"
+                  placeholder="Got one? Drop it here"
+                />
+              </label>
+
+              <div className="field">
+                <span className="label">How did you hear about us?</span>
+                <div className="custom-select-wrapper">
+                  <input
+                    type="text"
+                    value={hearSearch || selectedHear}
+                    onChange={(e) => {
+                      setHearSearch(e.target.value)
+                      setShowHearDropdown(true)
+                      if (e.target.value) {
+                        setSelectedHear('')
+                      }
+                    }}
+                    onFocus={() => setShowHearDropdown(true)}
+                    className="country-search-input"
+                    placeholder="Type to search options..."
+                  />
+                  <input
+                    type="hidden"
+                    name="entry.2027430660"
+                    value={selectedHear}
+                  />
+                  {showHearDropdown && (
+                    <div className="country-dropdown">
+                      {filteredHearOptions.length > 0 ? (
+                        filteredHearOptions.map((option) => (
+                          <div
+                            key={option}
+                            className="country-option"
+                            onClick={() => {
+                              setSelectedHear(option)
+                              setHearSearch('')
+                              setShowHearDropdown(false)
+                            }}
+                          >
+                            {option}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="country-option no-results">No options found</div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="field">
+                <span className="label">Learn2Earn - Referral program</span>
+                <div className="pill-group">
+                  {learnOptions.map((option) => (
+                    <label key={option} className="pill-option">
+                      <input type="radio" name="entry.2147449936" value={option} />
+                      <span>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <label className="field">
+                <span>Comments (optional)</span>
+                <textarea
+                  id="1329859687"
+                  name="entry.1329859687"
+                  rows="3"
+                  placeholder="Share anything we should know"
+                />
+              </label>
+            </div>
+
+            {submitError ? <p className="error">{submitError}</p> : null}
+
+            <button type="submit" className="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : 'Submit now'}
+            </button>
+            <p className="footnote">By submitting, you agree to hear from Toko Academy about programs.</p>
+          </form>
+        </section>
+
+        {/* Quote Card */}
+        <section className="quote-card">
+          <blockquote className="quote-content">
+            "Learning a digital skill today is a passport to every opportunity tomorrow."
+            <cite>— Toko Academy</cite>
+          </blockquote>
+        </section>
+
+        {/* Footer */}
+        <footer className="footer">
+          <div className="footer-content">
+            <div className="footer-col">
+              <h4>Quick Links</h4>
+              <ul>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#programs">Programs</a></li>
+                <li><a href="#contact">Contact</a></li>
+              </ul>
+            </div>
+            <div className="footer-col">
+              <h4>Location</h4>
+              <p>Nigeria</p>
+              <p><a href="mailto:hello@tokoacademy.com">hello@tokoacademy.com</a></p>
+            </div>
+            <div className="footer-col">
+              <h4>Legal</h4>
+              <ul>
+                <li><a href="#terms">Terms & Conditions</a></li>
+                <li><a href="#privacy">Privacy Policy</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <p>&copy; 2025 Toko Academy. All rights reserved.</p>
+          </div>
+        </footer>
+      </div>
+
+      {showModal && (
+        <div className="modal" role="dialog" aria-modal="true">
+          <div className="modal-card">
+            <div className="modal-badge">Form submitted</div>
+            <h3>Thank you!</h3>
+            <p>
+              Your registration is on its way to Google Forms. We will reach out with next steps soon.
+            </p>
+            <button className="submit" onClick={() => setShowModal(false)}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default App
