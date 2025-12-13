@@ -4,6 +4,9 @@ import './App.css'
 const FORM_ACTION =
   'https://docs.google.com/forms/d/e/1FAIpQLSftMCHrr_ouZu8nQ_eL0Oe1OpJ8so4iBgN0Xf4Xfsrb7tU-jQ/formResponse'
 
+const FORM_ACTION_ENROLL =
+  'https://docs.google.com/forms/d/e/1FAIpQLSeK112lf9ejRixOsTcNwQH6jUJ16IobXBI08rKhJ-TwJ_jANg/formResponse'
+
 const hearOptions = [
   'Family, Friend or Colleague',
   'WhatsApp Status, Group, Message, Share',
@@ -89,6 +92,7 @@ const citiesByState = {
 
 function App() {
   const formRef = useRef(null)
+  const enrollmentFormRef = useRef(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [submitError, setSubmitError] = useState('')
@@ -107,6 +111,7 @@ function App() {
   const [hearSearch, setHearSearch] = useState('')
   const [selectedHear, setSelectedHear] = useState('')
   const [showHearDropdown, setShowHearDropdown] = useState(false)
+  const [showEnrollmentForm, setShowEnrollmentForm] = useState(false)
 
   const filteredCountries = countries.filter((country) =>
     country.toLowerCase().includes(countrySearch.toLowerCase())
@@ -157,9 +162,34 @@ function App() {
         body: formData,
       })
       formRef.current.reset()
-      setShowModal(true)
+      // After successful registration submission, show the enrollment (course selection) page
+      setShowEnrollmentForm(true)
     } catch (error) {
       setSubmitError('Something went wrong. Please try again in a moment.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleEnrollmentSubmit = async (event) => {
+    event.preventDefault()
+    if (!enrollmentFormRef.current) return
+
+    const formData = new FormData(enrollmentFormRef.current)
+    setIsSubmitting(true)
+    setSubmitError('')
+
+    try {
+      await fetch(FORM_ACTION_ENROLL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: formData,
+      })
+      enrollmentFormRef.current.reset()
+      setShowModal(true)
+      setShowEnrollmentForm(false)
+    } catch (error) {
+      setSubmitError('Something went wrong submitting enrollment. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -175,29 +205,30 @@ function App() {
           <img src="/toko-logo.png" alt="Toko Academy" className="brand-logo" />
         </header>
 
-        {/* Registration Form */}
-        <section className="card form-card">
-          <header className="card-header">
-            <div>
-              <p className="badge">Toko Academy Registration Form</p>
-              <h2>Join us today</h2>
-              <p className="lede">Quick, simple, and secure registration.</p>
-            </div>
-          </header>
+        {/* Registration Form / Enrollment flow */}
+        {!showEnrollmentForm ? (
+          <section className="card form-card">
+            <header className="card-header">
+              <div>
+                <p className="badge">Toko Academy Registration Form</p>
+                <h2>Join us today</h2>
+                <p className="lede">Quick, simple, and secure registration.</p>
+              </div>
+            </header>
 
-          <form
-            ref={formRef}
-            action={FORM_ACTION}
-            method="POST"
-            target="_self"
-            onSubmit={handleSubmit}
-          >
-            <input type="hidden" name="fvv" value="1" />
-            <input type="hidden" name="fbzx" value="-1271932783757056429" />
-            <input type="hidden" name="pageHistory" value="0,1,2" />
+            <form
+              ref={formRef}
+              action={FORM_ACTION}
+              method="POST"
+              target="_self"
+              onSubmit={handleSubmit}
+            >
+              <input type="hidden" name="fvv" value="1" />
+              <input type="hidden" name="fbzx" value="-1271932783757056429" />
+              <input type="hidden" name="pageHistory" value="0,1,2" />
 
-            {/* All fields in one section */}
-            <div className="unified-section">
+              {/* All fields in one section */}
+              <div className="unified-section">
               <div className="field-grid-two">
                 <label className="field">
                   <span>First Name</span>
@@ -252,7 +283,7 @@ function App() {
                 <span className="label">Gender</span>
                 <div className="pill-group">
                   {['Male', 'Female'].map((option) => (
-                    <label key={option} className="pill-option">
+                    <label key={option} className="pill-option">        
                       <input
                         type="radio"
                         name="entry.937345206"
@@ -293,7 +324,7 @@ function App() {
                       value={countrySearch || selectedCountry}
                       onChange={(e) => {
                         setCountrySearch(e.target.value)
-                        if (e.target.value && selectedCountry) {
+                        if (e.target.value && selectedCountry) {        
                           setSelectedCountry('')
                         }
                         setShowCountryDropdown(true)
@@ -302,8 +333,8 @@ function App() {
                         setCountrySearch('')
                         setShowCountryDropdown(true)
                       }}
-                      placeholder="Type to search countries... (e.g., Nigeria)"
-                      className="country-search-input"
+                      placeholder="Type to search countries... (e.g., Ni
+geria)"                                                                                       className="country-search-input"
                     />
                     <input
                       type="hidden"
@@ -328,7 +359,8 @@ function App() {
                             </div>
                           ))
                         ) : (
-                          <div className="country-option no-results">No countries found</div>
+                          <div className="country-option no-results">No 
+countries found</div>
                         )}
                       </div>
                     )}
@@ -351,10 +383,10 @@ function App() {
                             setSelectedState('')
                           }
                         }}
-                        onFocus={() => setShowStateDropdown(true)}
+                        onFocus={() => setShowStateDropdown(true)}      
                         className="country-search-input"
-                        placeholder="Type to search states... (e.g., Lagos)"
-                      />
+                        placeholder="Type to search states... (e.g., Lag
+os)"                                                                                          />
                       <input
                         type="hidden"
                         id="1870628818"
@@ -378,8 +410,8 @@ function App() {
                               </div>
                             ))
                           ) : (
-                            <div className="country-option no-results">No states found</div>
-                          )}
+                            <div className="country-option no-results">No 
+states found</div>                                                                              )}
                         </div>
                       )}
                     </div>
@@ -395,7 +427,7 @@ function App() {
                     />
                   </label>
                 )}
-                {selectedCountry === 'Nigeria' && selectedState ? (
+                {selectedCountry === 'Nigeria' && selectedState ? (     
                   <div className="field">
                     <span>City</span>
                     <div className="custom-select-wrapper">
@@ -409,7 +441,7 @@ function App() {
                             setSelectedCity('')
                           }
                         }}
-                        onFocus={() => setShowCityDropdown(true)}
+                        onFocus={() => setShowCityDropdown(true)}       
                         className="country-search-input"
                         placeholder="Type to search cities..."
                       />
@@ -436,8 +468,8 @@ function App() {
                               </div>
                             ))
                           ) : (
-                            <div className="country-option no-results">No cities found</div>
-                          )}
+                            <div className="country-option no-results">N
+o cities found</div>                                                                              )}
                         </div>
                       )}
                     </div>
@@ -445,8 +477,8 @@ function App() {
                 ) : (
                   <label className="field">
                     <span>City</span>
-                    <input id="1603432109" name="entry.1603432109" type="text" placeholder="Lagos" />
-                  </label>
+                    <input id="1603432109" name="entry.1603432109" type=
+"text" placeholder="Lagos" />                                                             </label>
                 )}
               </div>
 
@@ -461,8 +493,8 @@ function App() {
               </label>
 
               <div className="field">
-                <span className="label">How did you hear about us?</span>
-                <div className="custom-select-wrapper">
+                <span className="label">How did you hear about us?</span
+>                                                                                       <div className="custom-select-wrapper">
                   <input
                     type="text"
                     value={hearSearch || selectedHear}
@@ -499,20 +531,20 @@ function App() {
                           </div>
                         ))
                       ) : (
-                        <div className="country-option no-results">No options found</div>
-                      )}
+                        <div className="country-option no-results">No op
+tions found</div>                                                                             )}
                     </div>
                   )}
                 </div>
               </div>
 
               <div className="field">
-                <span className="label">Learn2Earn - Referral program</span>
-                <div className="pill-group">
+                <span className="label">Learn2Earn - Referral program</s
+pan>                                                                                    <div className="pill-group">
                   {learnOptions.map((option) => (
-                    <label key={option} className="pill-option">
-                      <input type="radio" name="entry.2147449936" value={option} />
-                      <span>{option}</span>
+                    <label key={option} className="pill-option">        
+                      <input type="radio" name="entry.2147449936" value=
+{option} />                                                                                   <span>{option}</span>
                     </label>
                   ))}
                 </div>
@@ -529,14 +561,89 @@ function App() {
               </label>
             </div>
 
-            {submitError ? <p className="error">{submitError}</p> : null}
+              {submitError ? <p className="error">{submitError}</p> : null}
 
-            <button type="submit" className="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Submitting...' : 'Submit now'}
-            </button>
-            <p className="footnote">By submitting, you agree to hear from Toko Academy about programs.</p>
-          </form>
-        </section>
+              <button type="submit" className="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Submitting...' : 'Select Course'}
+              </button>
+              <p className="footnote">By submitting, you agree to hear from Toko Academy about programs.</p>
+            </form>
+          </section>
+        ) : (
+          <section className="card form-card">
+            <header className="card-header">
+              <div>
+                <p className="badge">Toko Academy Enrollment</p>
+                <h2>TA ENROLLMENT</h2>
+                <p className="lede">Select your course of interest</p>
+              </div>
+            </header>
+
+            <form
+              ref={enrollmentFormRef}
+              action={FORM_ACTION_ENROLL}
+              method="POST"
+              target="_self"
+              onSubmit={handleEnrollmentSubmit}
+            >
+              <input type="hidden" name="fvv" value="1" />
+              <input type="hidden" name="fbzx" value="-4650414733647033103" />
+              <input type="hidden" name="pageHistory" value="0" />
+
+              <div className="unified-section">
+                <label className="field">
+                  <span>Full Name</span>
+                  <input id="1876164443" name="entry.1876164443" type="text" />
+                </label>
+
+                <label className="field">
+                  <span>Email</span>
+                  <input id="1501237888" name="entry.1501237888" type="text" />
+                </label>
+
+                <label className="field">
+                  <span>Select Course</span>
+                  <input id="516252671" name="entry.516252671" type="text" />
+                </label>
+
+                <label className="field">
+                  <span>Start Date</span>
+                  <input id="1793515843" name="entry.1793515843" type="text" />
+                </label>
+
+                <div className="field">
+                  <span className="label">Study Mode</span>
+                  <div className="option-list">
+                    <label className="option">
+                      <input type="radio" name="entry.1961262730" value="Online" />
+                      <span>Online</span>
+                    </label>
+                    <label className="option">
+                      <input type="radio" name="entry.1961262730" value="In-Person" />
+                      <span>In-Person</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="field">
+                  <span className="label">Employment Status</span>
+                  <div className="option-list">
+                    {['Employed','Unemployed','Business','Corp Member','Student'].map((s) => (
+                      <label key={s} className="option">
+                        <input type="radio" name="entry.1506501811" value={s} />
+                        <span>{s}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" className="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Submitting...' : 'Submit'}
+              </button>
+            </form>
+          </section>
+        )}
 
         {/* Quote Card */}
         <section className="quote-card">
