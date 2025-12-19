@@ -7,13 +7,14 @@ import Enrollment from './Enrollment'
 import Terms from './Terms'
 import Privacy from './Privacy'
 
-const pathname = window.location.pathname || '/'
+const params = new URLSearchParams(window.location.search)
+const page = params.get('page')
 
 function RootRouter() {
-  // route: /enroll -> Enrollment, /terms -> Terms, /privacy -> Privacy, else -> Registration
-  if (pathname.includes('/enroll')) return <Enrollment />
-  if (pathname.includes('/terms')) return <Terms />
-  if (pathname.includes('/privacy')) return <Privacy />
+  // route: ?page=enroll -> Enrollment, ?page=terms -> Terms, ?page=privacy -> Privacy, else -> Registration
+  if (page === 'enroll') return <Enrollment />
+  if (page === 'terms') return <Terms />
+  if (page === 'privacy') return <Privacy />
   return <Registration />
 }
 

@@ -71,7 +71,7 @@ function Terms() {
             </p>
 
             <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-              <a href="/" style={{ color: 'var(--green)', textDecoration: 'underline' }}>Back to Home</a>
+              <a href="?" style={{ color: 'var(--green)', textDecoration: 'underline' }}>Back to Home</a>
             </div>
           </div>
         </section>
@@ -80,7 +80,7 @@ function Terms() {
           <div className="footer-content">
             <div className="footer-col"><h4>Quick Links</h4><ul><li><a href="https://tokoacademy.org/">Home</a></li><li><a href="https://tokoacademy.org/about-us/">About Us</a></li><li><a href="https://tokoacademy.org/courses/">Programs</a></li><li><a href="https://tokoacademy.org/contact/">Contact</a></li></ul></div>
             <div className="footer-col"><h4>Location</h4><p>Nigeria</p><p><a href="mailto:tokoacademyinstitute@gmail.com">Email Us</a></p></div>
-            <div className="footer-col"><h4>Legal</h4><ul><li><a href="/terms">Terms & Conditions</a></li><li><a href="/privacy">Privacy Policy</a></li></ul></div>
+            <div className="footer-col"><h4>Legal</h4><ul><li><a href="?page=terms">Terms & Conditions</a></li><li><a href="?page=privacy">Privacy Policy</a></li></ul></div>
           </div>
           <div className="footer-bottom"><p>&copy; 2025 Toko Academy. All rights reserved.</p></div>
         </footer>

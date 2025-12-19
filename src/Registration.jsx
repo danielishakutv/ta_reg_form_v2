@@ -159,7 +159,8 @@ function Registration() {
       const last = formData.get('entry.1177775265') || ''
       const email = formData.get('entry.1176471856') || ''
       const fullName = [first, middle, last].map(s => s.trim()).filter(Boolean).join(' ')
-      const url = new URL(window.location.origin + '/register/enroll')
+      const url = new URL(window.location.origin + window.location.pathname)
+      url.searchParams.set('page', 'enroll')
       if (fullName) url.searchParams.set('Full Name', fullName)
       if (email) url.searchParams.set('Email', email)
       if (utms.utmsource) url.searchParams.set('utm_source', utms.utmsource)
@@ -377,7 +378,7 @@ function Registration() {
           <div className="footer-content">
             <div className="footer-col"><h4>Quick Links</h4><ul><li><a href="https://tokoacademy.org/">Home</a></li><li><a href="https://tokoacademy.org/about-us/">About Us</a></li><li><a href="https://tokoacademy.org/courses/">Programs</a></li><li><a href="https://tokoacademy.org/contact/">Contact</a></li></ul></div>
             <div className="footer-col"><h4>Location</h4><p>Nigeria</p><p><a href="mailto:tokoacademyinstitute@gmail.com">Email Us</a></p></div>
-            <div className="footer-col"><h4>Legal</h4><ul><li><a href="/terms">Terms & Conditions</a></li><li><a href="/privacy">Privacy Policy</a></li></ul></div>
+            <div className="footer-col"><h4>Legal</h4><ul><li><a href="?page=terms">Terms & Conditions</a></li><li><a href="?page=privacy">Privacy Policy</a></li></ul></div>
           </div>
           <div className="footer-bottom"><p>&copy; 2025 Toko Academy. All rights reserved.</p></div>
         </footer>
