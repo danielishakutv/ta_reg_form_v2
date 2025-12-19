@@ -1,0 +1,19 @@
+We have 2 Google forms, 
+1. TA Registration
+2. TA Enrollment
+
+The form on the website has two sections but uses React UI to interact with user but submits to both Google Forms accordingly. 
+
+TA Registration Form 
+Capture basic info and contact information for further follow ups
+
+
+TA Enrollment Form 
+Course selection details and preferred start date and study mode of participant.
+
+Auto fills if link is clicked from user's email. 
+
+
+Opening with registration query params pre-fills the registration form fields.
+UTMs parsed from URL (or default to "direct") are submitted as hidden entry.* fields on registration and enrollment.
+Prefills persist in localStorage so a user can return and continue the form.
