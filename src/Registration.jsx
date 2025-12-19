@@ -159,7 +159,7 @@ function Registration() {
       const last = formData.get('entry.1177775265') || ''
       const email = formData.get('entry.1176471856') || ''
       const fullName = [first, middle, last].map(s => s.trim()).filter(Boolean).join(' ')
-      const url = new URL(window.location.origin + '/enroll')
+      const url = new URL(window.location.origin + '/register/enroll')
       if (fullName) url.searchParams.set('Full Name', fullName)
       if (email) url.searchParams.set('Email', email)
       if (utms.utmsource) url.searchParams.set('utm_source', utms.utmsource)
@@ -178,7 +178,7 @@ function Registration() {
       <div className="bg-aurora" aria-hidden="true" />
       <div className="layout">
         <header className="header-section">
-          <img src="/toko-logo.png" alt="Toko Academy" className="brand-logo" />
+          <img src="https://tokoacademy.org/logo/ta_logo_png.png" alt="Toko Academy" className="brand-logo" />
         </header>
         <section className="card form-card">
           <header className="card-header">

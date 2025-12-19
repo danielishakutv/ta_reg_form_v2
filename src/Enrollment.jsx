@@ -243,7 +243,7 @@ function Enrollment() {
       <div className="bg-aurora" aria-hidden="true" />
       <div className="layout">
         <header className="header-section">
-          <img src="/toko-logo.png" alt="Toko Academy" className="brand-logo" />
+          <img src="https://tokoacademy.org/logo/ta_logo_png.png" alt="Toko Academy" className="brand-logo" />
         </header>
 
         <section className="card form-card">
