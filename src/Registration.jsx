@@ -220,7 +220,7 @@ function Registration() {
                 </label>
                 <label className="field">
                   <span>Age Range</span>
-                  <select id="1239723871" name="entry.1239723871" className="select-field" defaultValue={registrationPrefills['entry.1239723871'] || ''}>
+                  <select id="1239723871" name="entry.1239723871" className="select-field" required defaultValue={registrationPrefills['entry.1239723871'] || ''}>
                     <option value="">Select age range</option>
                     <option value="5 - 12">5 - 12</option>
                     <option value="13 - 17">13 - 17</option>
@@ -245,13 +245,22 @@ function Registration() {
 
               <div className="field">
                 <span className="label">Email</span>
-                <input id="1176471856" name="entry.1176471856" type="email" placeholder="you@email.com" defaultValue={registrationPrefills['entry.1176471856'] || ''} />
+                <input id="1176471856" name="entry.1176471856" type="email" placeholder="you@email.com" required defaultValue={registrationPrefills['entry.1176471856'] || ''} />
               </div>
 
               <div className="field-grid-two">
                 <label className="field">
                   <span>Phone</span>
-                  <input id="1993772028" name="entry.1993772028" type="tel" placeholder="0800 000 0000" defaultValue={registrationPrefills['entry.1993772028'] || ''} />
+                  <input
+                    id="1993772028"
+                    name="entry.1993772028"
+                    type="tel"
+                    placeholder="0800 000 0000"
+                    required
+                    pattern="^(234\d{10}|0\d{10})$"
+                    title="Enter 11 digits (e.g., 08088256055) or 13 digits with country code (e.g., 2348088256055)."
+                    defaultValue={registrationPrefills['entry.1993772028'] || ''}
+                  />
                 </label>
                 <div className="field">
                   <span>Country</span>
@@ -323,7 +332,7 @@ function Registration() {
               <div className="field">
                 <span className="label">How did you hear about us?</span>
                 <div className="custom-select-wrapper" ref={hearWrapperRef}>
-                  <input type="text" value={hearSearch || selectedHear || registrationPrefills['entry.2027430660'] || ''} onChange={(e) => { setHearSearch(e.target.value); setSelectedHear(''); setShowHearDropdown(true) }} onFocus={() => setShowHearDropdown(true)} className="country-search-input" placeholder="Type to search options..." />
+                  <input type="text" value={hearSearch || selectedHear || registrationPrefills['entry.2027430660'] || ''} onChange={(e) => { setHearSearch(e.target.value); setSelectedHear(e.target.value); setShowHearDropdown(true) }} onFocus={() => setShowHearDropdown(true)} className="country-search-input" placeholder="Type to search options..." required />
                   <input type="hidden" name="entry.2027430660" value={selectedHear || registrationPrefills['entry.2027430660'] || ''} />
                   {showHearDropdown && (
                     <div className="country-dropdown">

@@ -73,6 +73,7 @@ function Enrollment() {
   const [selectedCourse, setSelectedCourse] = useState('')
   const [showCourseDropdown, setShowCourseDropdown] = useState(false)
   const [selectedStudyMode, setSelectedStudyMode] = useState('')
+  const [selectedBatchId, setSelectedBatchId] = useState('')
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -276,12 +277,12 @@ function Enrollment() {
             <div className="unified-section">
               <label className="field">
                 <span>Full Name</span>
-                <input id="1876164443" name="entry.1876164443" type="text" defaultValue={enrollmentPrefills['entry.1876164443'] || ''} />
+                <input id="1876164443" name="entry.1876164443" type="text" required defaultValue={enrollmentPrefills['entry.1876164443'] || ''} />
               </label>
 
               <label className="field">
                 <span>Email</span>
-                <input id="1501237888" name="entry.1501237888" type="text" defaultValue={enrollmentPrefills['entry.1501237888'] || ''} />
+                <input id="1501237888" name="entry.1501237888" type="text" required defaultValue={enrollmentPrefills['entry.1501237888'] || ''} />
               </label>
 
               <label className="field">
@@ -295,6 +296,7 @@ function Enrollment() {
                     onFocus={() => { setCourseSearch(''); setShowCourseDropdown(true) }}
                     placeholder="Type to search courses... (e.g., DA101)"
                     className="country-search-input"
+                    required
                   />
                   <input type="hidden" id="516252671" name="entry.516252671" value={selectedCourse} />
                   {showCourseDropdown && (
@@ -323,6 +325,7 @@ function Enrollment() {
                                 setSelectedCourse(value)
                                 setSelectedCourseId(c.course_id)
                                 setSelectedStartDate('')
+                                setSelectedBatchId('')
                                 setStartSearch('')
                                 setCourseSearch('')
                                 // close dropdown then move focus to Start Date
@@ -352,6 +355,7 @@ function Enrollment() {
                     onFocus={() => { setStartSearch(''); setShowStartDropdown(true) }}
                     placeholder="Select a start date..."
                     className="country-search-input"
+                    required
                     disabled={!selectedCourseId}
                   />
                   <input type="hidden" id="1793515843" name="entry.1793515843" value={selectedStartDate} />
@@ -381,6 +385,7 @@ function Enrollment() {
                                 setSelectedStartDate(b.start_date)
                                 setSelectedStartLabel(label)
                                 setSelectedStudyMode(b.study_mode || '')
+                                setSelectedBatchId(b.batch_id || '')
                                 setStartSearch('')
                                 setShowStartDropdown(false)
                               }}
@@ -393,13 +398,14 @@ function Enrollment() {
                   )}
                 </div>
               </label>
-              <input type="hidden" name="entry.1961262730" value={selectedStudyMode || ''} />
+              <input type="hidden" name="entry.1961262730" value={selectedStudyMode || ''} required />
+              <input type="hidden" id="799829969" name="entry.799829969" value={selectedBatchId || ''} />
 
               <div className="field">
                 <span className="label">Employment Status</span>
                 <div className="option-list">
                   {['Employed','Unemployed','Business','Corp Member','Student'].map((s) => (
-                    <label key={s} className="option"><input type="radio" name="entry.1506501811" value={s} defaultChecked={enrollmentPrefills['entry.1506501811'] === s} /> <span>{s}</span></label>
+                    <label key={s} className="option"><input type="radio" name="entry.1506501811" value={s} required defaultChecked={enrollmentPrefills['entry.1506501811'] === s} /> <span>{s}</span></label>
                   ))}
                 </div>
               </div>
