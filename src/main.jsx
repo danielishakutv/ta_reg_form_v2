@@ -6,13 +6,15 @@ import Registration from './Registration'
 import Enrollment from './Enrollment'
 import Terms from './Terms'
 import Privacy from './Privacy'
+import Success from './Success'
 
 const params = new URLSearchParams(window.location.search)
 const page = params.get('page')
 
 function RootRouter() {
-  // route: ?page=enroll -> Enrollment, ?page=terms -> Terms, ?page=privacy -> Privacy, else -> Registration
+  // route: ?page=enroll -> Enrollment, ?page=success -> Success, ?page=terms -> Terms, ?page=privacy -> Privacy, else -> Registration
   if (page === 'enroll') return <Enrollment />
+  if (page === 'success') return <Success />
   if (page === 'terms') return <Terms />
   if (page === 'privacy') return <Privacy />
   return <Registration />

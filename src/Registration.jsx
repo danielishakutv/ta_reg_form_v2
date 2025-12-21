@@ -347,6 +347,11 @@ function Registration() {
 
               <div className="field">
                 <span className="label">Learn2Earn - Referral program</span>
+                <p style={{ fontSize: '0.95rem', color: '#fff', marginBottom: '1rem', lineHeight: '1.6' }}>
+                  Join our Learn2Earn program and earn rewards by referring friends and colleagues to our courses. 
+                  Plus, become eligible for real rewards by participating in our online games. It's a win-win way to 
+                  grow your network while earning!
+                </p>
                 <div className="pill-group">
                   {['Yes', 'No'].map((option) => (
                     <label key={option} className="pill-option">

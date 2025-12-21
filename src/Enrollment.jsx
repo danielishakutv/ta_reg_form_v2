@@ -230,7 +230,8 @@ function Enrollment() {
     try {
       await fetch(FORM_ACTION_ENROLL, { method: 'POST', mode: 'no-cors', body: formData })
       enrollmentFormRef.current.reset()
-      setShowModal(true)
+      // Redirect to success page after enrollment submission
+      window.location.href = '?page=success'
     } catch (error) {
       setSubmitError('Something went wrong submitting enrollment. Please try again.')
     } finally {
